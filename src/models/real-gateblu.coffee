@@ -17,7 +17,9 @@ class RealGateblu
         return callback error if error?
         return callback() if @_theSame @attributes, virtualGateblu, subdeviceUuids
         update = {devices: subdeviceUuids, type: @attributes.type, name: @attributes.name}
-        @meshblu.update uuid, update, callback
+
+        metadata = forwardedFor: [@meshbluConfig.uuid]
+        @meshblu.update uuid, update, metadata, callback
 
   virtualSubdeviceUuids: ({owner}, callback) =>
     virtualSubdevices = _.map @attributes.devices, (realUuid) =>

@@ -3,8 +3,8 @@ async       = require 'async'
 MeshbluHttp = require 'meshblu-http'
 
 class VirtualGateblu
-  constructor: ({@attributes,meshbluConfig}) ->
-    @meshblu = new MeshbluHttp meshbluConfig
+  constructor: ({@attributes, @meshbluConfig}) ->
+    @meshblu = new MeshbluHttp @meshbluConfig
 
   devirtualizedDevice: ({uuid, connector, type}, callback) =>
     return callback @_userError "malformed subdevice record", 422 unless uuid?
@@ -24,7 +24,8 @@ class VirtualGateblu
       return callback error if error?
 
       realGatebluUuid = @attributes.shadowing.uuid
-      @meshblu.update realGatebluUuid, devices: realSubdeviceRecords, callback
+      metadata = forwardedFor: [@meshbluConfig.uuid]
+      @meshblu.update realGatebluUuid, devices: realSubdeviceRecords, metadata, callback
 
   _userError: (message, code) =>
     error = new Error message
